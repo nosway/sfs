@@ -6,18 +6,18 @@ aufs (https://github.com/krinkinmu/aufs), minix, and ext2 file systems.
 
 On-disk file system layout
 
-+-------------------------+
-|       Super Block       |
-+-------------------------+
-| Block Allocation Bitmap |  
-+-------------------------+
-| Inode Allocation Bitmap | 
-+-------------------------+
-|       Inode List        | 
-+-------------------------+
-|       Data Blocks       | 
-|  (including root dir.)  |
-+-------------------------+
++-------------------------+<br>
+|       Super Block       |<br>
++-------------------------+<br>
+| Block Allocation Bitmap |<br>  
++-------------------------+<br>
+| Inode Allocation Bitmap |<br> 
++-------------------------+<br>
+|       Inode List        |<br> 
++-------------------------+<br>
+|       Data Blocks       |<br> 
+|  (including root dir.)  |<br>
++-------------------------+<br>
 
 All on-disk metadata numbers are in little-endian order.
 
