@@ -1,9 +1,9 @@
 sfs (simple file system for Linux)
 =========
 
-The file system "sfs" is helpful to understand Linux VFS and file system basics. 
+The file system "sfs" is helpful to understand Linux VFS and file system basics.<br> 
 The source code of sfs was written by referring to  
-aufs (https://github.com/krinkinmu/aufs), minix, and ext2 file systems.
+aufs (https://github.com/krinkinmu/aufs), ext2 and minix file systems.
 
 On-disk file system layout
 
