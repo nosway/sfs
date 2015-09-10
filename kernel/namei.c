@@ -12,7 +12,8 @@ static int add_nondir(struct dentry *dentry, struct inode *inode)
 	return err;	
 }
 
-static int sfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
+static int sfs_mknod(struct inode *dir, struct dentry *dentry, 
+			umode_t mode, dev_t rdev)
 {
 	int err;
 	struct inode *inode;
@@ -86,7 +87,8 @@ static struct dentry *sfs_lookup(struct inode *dir, struct dentry *dentry,
 	return NULL;
 }
 
-static int sfs_create(struct inode *dir, struct dentry *dentry, umode_t mode, bool excl)
+static int sfs_create(struct inode *dir, struct dentry *dentry, 
+			umode_t mode, bool excl)
 {
 	int err;
 	struct inode *inode;
@@ -101,7 +103,7 @@ static int sfs_create(struct inode *dir, struct dentry *dentry, umode_t mode, bo
 } 
 
 static int sfs_symlink(struct inode * dir, struct dentry *dentry,
-	  const char * symname)
+			const char * symname)
 {
 	int err = -ENAMETOOLONG;
 	int i = strlen(symname)+1;
@@ -130,7 +132,7 @@ out_fail:
 }
 
 static int sfs_link(struct dentry * old_dentry, struct inode * dir,
-	struct dentry *dentry)
+			struct dentry *dentry)
 {
 	struct inode *inode = old_dentry->d_inode;
 
@@ -260,22 +262,21 @@ const struct inode_operations sfs_file_inode_ops = {
 
 const struct inode_operations sfs_symlink_inode_ops = {
 	.readlink		= generic_readlink,
-	.follow_link	= page_follow_link_light,
+	.follow_link		= page_follow_link_light,
 	.put_link		= page_put_link,
 	.getattr		= sfs_getattr,
 };
 
 const struct inode_operations sfs_dir_inode_ops = {
-	.create =	sfs_create,
-	.lookup =	sfs_lookup,
-	.link =		sfs_link,
-	.unlink =	sfs_unlink,
-	.symlink =	sfs_symlink,
-	.mknod	=	sfs_mknod,
-	.mkdir =	sfs_mkdir,
-	.rmdir =	sfs_rmdir,
-	.rename =	sfs_rename,
-	.getattr =	sfs_getattr,
+	.create		= sfs_create,
+	.lookup		= sfs_lookup,
+	.link		= sfs_link,
+	.unlink		= sfs_unlink,
+	.symlink	= sfs_symlink,
+	.mknod		= sfs_mknod,
+	.mkdir		= sfs_mkdir,
+	.rmdir		= sfs_rmdir,
+	.rename		= sfs_rename,
+	.getattr	= sfs_getattr,
 };
-
 

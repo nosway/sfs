@@ -36,7 +36,8 @@ static inline void sfs_super_block_fill(struct sfs_sb_info *sbi,
 	sbi->s_ninodes = le32_to_cpu(dsb->s_ninodes);
 	sbi->s_inodes_per_block = sbi->s_blocksize / sizeof(struct sfs_inode); 
 	sbi->s_bits_per_block = 8*sbi->s_blocksize;
-	sbi->s_dir_entries_per_block = sbi->s_blocksize / sizeof(struct sfs_dir_entry);
+	sbi->s_dir_entries_per_block =
+			sbi->s_blocksize / sizeof(struct sfs_dir_entry);
 	sbi->s_inode_list_start = sbi->s_bam_blocks + sbi->s_iam_blocks + 1; 
 	sbi->s_data_block_start = sbi->s_inode_list_start + sbi->s_inode_blocks;
 }
@@ -83,7 +84,6 @@ static int sfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
 	buf->f_type = sb->s_magic;
 	buf->f_bsize = sb->s_blocksize;
-	//buf->f_blocks = (sbi->s_nblocks - sbi->s_data_block_start) << 2;
 	buf->f_blocks = sbi->s_nblocks - sbi->s_data_block_start;
 	buf->f_bfree = sfs_count_free_blocks(sb);
 	buf->f_bavail = buf->f_bfree;
@@ -148,12 +148,12 @@ static void sfs_inode_cache_destroy(void)
 }
 
 static struct super_operations const sfs_super_ops = {
-	.alloc_inode = sfs_alloc_inode,
-	.destroy_inode = sfs_destroy_inode,
-	.write_inode = sfs_write_inode,
-	.evict_inode = sfs_evict_inode,
-	.put_super = sfs_put_super,
-	.statfs		= sfs_statfs,
+	.alloc_inode		= sfs_alloc_inode,
+	.destroy_inode		= sfs_destroy_inode,
+	.write_inode		= sfs_write_inode,
+	.evict_inode		= sfs_evict_inode,
+	.put_super		= sfs_put_super,
+	.statfs			= sfs_statfs,
 };
 
 static int sfs_fill_super(struct super_block *sb, void *data, int silent)
@@ -178,14 +178,15 @@ static int sfs_fill_super(struct super_block *sb, void *data, int silent)
 	}
 
 	if (!sbi->s_bam_blocks || !sbi->s_iam_blocks || !sbi->s_inode_blocks) {
-		pr_err("Invalid metadata: BAM(%ld), IAM(%ld), Inode list(%ld)\n",
+		pr_err("Invalid meta: BAM(%ld), IAM(%ld), Inode list(%ld)\n",
 			(long)sbi->s_bam_blocks, 
 			(long)sbi->s_iam_blocks, 
 			(long)sbi->s_inode_blocks);
 		return -EINVAL;
 	}	 
 
-	map = kzalloc(sizeof(struct buffer_head *)*(sbi->s_bam_blocks + sbi->s_iam_blocks), GFP_KERNEL);
+	map = kzalloc(sizeof(struct buffer_head *) * 
+			(sbi->s_bam_blocks + sbi->s_iam_blocks), GFP_KERNEL);
 	sbi->s_bam_bh = &map[0]; 
 	sbi->s_iam_bh = &map[sbi->s_bam_blocks];
 
@@ -228,7 +229,8 @@ error:
 static struct dentry *sfs_mount(struct file_system_type *type, int flags,
 			char const *dev, void *data)
 {
-	struct dentry *entry = mount_bdev(type, flags, dev, data, sfs_fill_super);
+	struct dentry *entry = 
+			mount_bdev(type, flags, dev, data, sfs_fill_super);
 
 	if (IS_ERR(entry))
 		pr_err("sfs mounting failed\n");
@@ -238,11 +240,11 @@ static struct dentry *sfs_mount(struct file_system_type *type, int flags,
 }
 
 static struct file_system_type sfs_type = {
-	.owner = THIS_MODULE,
-	.name = "sfs",
-	.mount = sfs_mount,
-	.kill_sb = kill_block_super,
-	.fs_flags = FS_REQUIRES_DEV
+	.owner			= THIS_MODULE,
+	.name			= "sfs",
+	.mount			= sfs_mount,
+	.kill_sb		= kill_block_super,
+	.fs_flags		= FS_REQUIRES_DEV
 };
 
 static int __init init_sfs_fs(void)

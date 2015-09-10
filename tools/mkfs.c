@@ -11,12 +11,12 @@
 #include "bitmap.h"
 
 struct fs_config {
-    int			fs_fd;
+	int		fs_fd;
 	uint64_t	fs_blocksize;
 	uint64_t	fs_iam_blocks;
 	uint64_t	fs_inode_blocks;
 	uint64_t	fs_bam_blocks;
-    uint64_t	fs_nblocks;
+	uint64_t	fs_nblocks;
 	uint64_t	fs_ninodes;
 	uint64_t	fs_data_start;
 };
@@ -157,8 +157,8 @@ int write_block(int blk_no, void *block)
 }
 
 struct blk_cache {
-	int		dirty;
-	int		blk_no;
+	int	dirty;
+	int	blk_no;
 	char	block[SFS_BLOCK_SIZE];
 	struct blk_cache *next; 
 };
@@ -391,25 +391,25 @@ void make_rootdir()
 
 int main(int ac, char *av[])
 {
-    struct stat st;
+	struct stat st;
 	char *block;
 	off_t size;
 
-    if (ac < 2) {
-        printf("error\n");
-        exit(1);
-    }
-    cfg.fs_fd = open(av[1], O_RDWR);
-    if (cfg.fs_fd < 0) {
-        printf("file open error\n");
-        exit(2);
-    }
+	if (ac < 2) {
+		printf("error\n");
+		exit(1);
+	}
+	cfg.fs_fd = open(av[1], O_RDWR);
+	if (cfg.fs_fd < 0) {
+		printf("file open error\n");
+		exit(2);
+	}
 
 	size = lseek(cfg.fs_fd, 0, SEEK_END);
 
 	// Initialize cfg
 	cfg.fs_blocksize = SFS_BLOCK_SIZE;
-    cfg.fs_nblocks = size / SFS_BLOCK_SIZE;
+	cfg.fs_nblocks = size / SFS_BLOCK_SIZE;
 	cfg.fs_bam_blocks = (cfg.fs_nblocks+BITS_PER_BLOCK-1)/BITS_PER_BLOCK;
 	cfg.fs_inode_blocks = (cfg.fs_nblocks/4)/INODES_PER_BLOCK;
 	cfg.fs_ninodes = cfg.fs_inode_blocks * INODES_PER_BLOCK;
@@ -417,14 +417,12 @@ int main(int ac, char *av[])
 	cfg.fs_data_start = 1 + cfg.fs_bam_blocks + 
 			cfg.fs_iam_blocks + cfg.fs_inode_blocks;
 
-    printf("Device size = %Ld\n", (long long) size);
-    printf("No. of blocks = %Ld\n", (long long) cfg.fs_nblocks);
-    printf("BAM blocks = %Ld\n", (long long) cfg.fs_bam_blocks);
-    printf("IAM blocks = %Ld\n", (long long) cfg.fs_iam_blocks);
-    printf("inode blocks = %Ld\n", (long long) cfg.fs_inode_blocks);
-
+	printf("Device size = %Ld\n", (long long) size);
+	printf("No. of blocks = %Ld\n", (long long) cfg.fs_nblocks);
+	printf("BAM blocks = %Ld\n", (long long) cfg.fs_bam_blocks);
+	printf("IAM blocks = %Ld\n", (long long) cfg.fs_iam_blocks);
+	printf("inode blocks = %Ld\n", (long long) cfg.fs_inode_blocks);
 	printf("Number of inodes = %Ld\n", (long long) cfg.fs_ninodes);
-
 	printf("Data block starts at %Ld block\n", (long long) cfg.fs_data_start); 
 
 	init_super_block(); 
@@ -435,6 +433,6 @@ int main(int ac, char *av[])
 	
 	bc_sync();
 	printf("Device write complete\n");
-    close(cfg.fs_fd);
+	close(cfg.fs_fd);
 }    
 

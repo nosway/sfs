@@ -17,8 +17,8 @@
 
 static const unsigned long SFS_MAGIC = 0x20150825;
 
-#define SUPER_BLOCK_NO          0
-#define SFS_BAD_INO				0
+#define SUPER_BLOCK_NO			0
+#define SFS_BAD_INO			0
 #define SFS_ROOT_INO			1
 #define SFS_LINK_MAX			32000
 
@@ -103,7 +103,7 @@ struct sfs_dir_entry *
 sfs_find_entry(struct dentry *dentry, struct page **res_page);
 int sfs_empty_dir(struct inode * inode);
 void sfs_set_link(struct sfs_dir_entry *de, struct page *page,
-    struct inode *inode);
+	struct inode *inode);
 int sfs_delete_entry(struct sfs_dir_entry *de, struct page *page);
 
 unsigned sfs_blocks(loff_t size, struct super_block *sb);
@@ -113,7 +113,7 @@ struct inode *sfs_new_inode(struct inode *dir, umode_t mode, int *err);
 void sfs_free_block(struct inode *inode, unsigned long block);
 
 struct sfs_inode *sfs_get_inode(struct super_block *sb, ino_t ino,
-    struct buffer_head **p);
+	struct buffer_head **p);
 
 void sfs_set_inode(struct inode *inode, dev_t rdev);
 struct inode *sfs_iget(struct super_block *sb, unsigned long no);

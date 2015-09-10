@@ -77,10 +77,12 @@ unsigned long sfs_new_block(struct inode * inode, int *err)
 	i = sbi->s_bam_last;
 	do {
 		spin_lock(&bitmap_lock);
-		block = find_first_zero_bit((unsigned long *)sbi->s_bam_bh[i]->b_data, 
+		block = find_first_zero_bit(
+			(unsigned long *)sbi->s_bam_bh[i]->b_data, 
 			sbi->s_bits_per_block); 
 		if (block < sbi->s_bits_per_block) {
-			set_bit(block, (unsigned long *)sbi->s_bam_bh[i]->b_data);
+			set_bit(block, 
+				(unsigned long *)sbi->s_bam_bh[i]->b_data);
 			spin_unlock(&bitmap_lock);
 			block += i * sbi->s_bits_per_block;
 			sbi->s_bam_last = i;
@@ -101,7 +103,6 @@ unsigned long sfs_count_free_blocks(struct super_block *sb)
 	struct sfs_sb_info *sbi = SFS_SB(sb);
 	u32 bits = sbi->s_nblocks - sbi->s_data_block_start + 1;
 
-	//return (count_free(sbi->s_bam_bh, sb->s_blocksize, bits) << 2);
 	return count_free(sbi->s_bam_bh, sb->s_blocksize, bits);
 }
 
@@ -156,23 +157,24 @@ void sfs_free_inode(struct inode * inode)
 
 struct inode *sfs_new_inode(struct inode *dir, umode_t mode, int *err)
 {
-    struct super_block *sb = dir->i_sb;
+	struct super_block *sb = dir->i_sb;
 	struct sfs_sb_info *sbi = SFS_SB(sb);
-    struct inode *inode;
-    unsigned long ino;
+	struct inode *inode;
+	unsigned long ino;
 	struct sfs_inode_info *si;
 	int i;
 
 	inode = new_inode(sb); 
-    if (!inode) {
-        *err = -ENOMEM;
-        return NULL;
-    }
+	if (!inode) {
+		*err = -ENOMEM;
+		return NULL;
+	}
 
 	i = sbi->s_iam_last;
 	do {
 		spin_lock(&bitmap_lock);
-		ino = find_first_zero_bit((unsigned long *)sbi->s_iam_bh[i]->b_data, 
+		ino = find_first_zero_bit(
+			(unsigned long *)sbi->s_iam_bh[i]->b_data, 
 			sbi->s_bits_per_block); 
 		if (ino < sbi->s_bits_per_block) {
 			set_bit(ino, (unsigned long *)sbi->s_iam_bh[i]->b_data);

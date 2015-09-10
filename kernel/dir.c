@@ -36,20 +36,20 @@ static int sfs_dir_prepare_chunk(struct page *page, loff_t pos, unsigned len)
 
 static int sfs_dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
 {   
-    struct address_space *mapping = page->mapping;
-    struct inode *dir = mapping->host;
-    int err = 0;
-    block_write_end(NULL, mapping, pos, len, len, page, NULL);
+	struct address_space *mapping = page->mapping;
+	struct inode *dir = mapping->host;
+	int err = 0;
+	block_write_end(NULL, mapping, pos, len, len, page, NULL);
 
-    if (pos+len > dir->i_size) {
-        i_size_write(dir, pos+len);
-        mark_inode_dirty(dir);
-    }
-    if (IS_DIRSYNC(dir))
-        err = write_one_page(page, 1);
-    else
-        unlock_page(page);
-    return err;
+	if (pos+len > dir->i_size) {
+		i_size_write(dir, pos+len);
+		mark_inode_dirty(dir);
+	}
+	if (IS_DIRSYNC(dir))
+		err = write_one_page(page, 1);
+	else
+		unlock_page(page);
+	return err;
 }
 
 static struct page *sfs_dir_get_page(struct inode *inode, size_t n)
@@ -93,8 +93,9 @@ static int sfs_iterate(struct inode *inode, struct dir_context *ctx)
 		char *kaddr;
 
 		if (IS_ERR(page)) {
-			pr_err("cannot access page %lu in %lu", (unsigned long)pidx,
-						(unsigned long)inode->i_ino);
+			pr_err("cannot access page %lu in %lu", 
+				(unsigned long)pidx,
+				(unsigned long)inode->i_ino);
 			return PTR_ERR(page);
 		}
 
@@ -365,7 +366,8 @@ void sfs_set_link(struct sfs_dir_entry *de, struct page *page,
 
 	err = sfs_dir_prepare_chunk(page, pos, sizeof(struct sfs_dir_entry));
 	if (err == 0) {
-		err = sfs_dir_commit_chunk(page, pos, sizeof(struct sfs_dir_entry));
+		err = sfs_dir_commit_chunk(page, pos, 
+				sizeof(struct sfs_dir_entry));
 	} else {
 		unlock_page(page);
 	}
@@ -391,9 +393,9 @@ ino_t sfs_inode_by_name(struct inode *dir, struct qstr *child)
 {
 	struct sfs_filename_match match = {
 		.ctx = { &sfs_match, 0 }, 
-        .ino = 0, 
-        .name = child->name, 
-        .len = child->len
+		.ino = 0, 
+		.name = child->name, 
+		.len = child->len
 	};
 
 	int err = sfs_iterate(dir, &match.ctx);

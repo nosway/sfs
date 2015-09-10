@@ -27,11 +27,11 @@ static void sfs_inode_fill(struct sfs_inode_info *si,
 static inline sector_t sfs_inode_block(struct sfs_sb_info const *sbi,
 			ino_t ino)
 {
-	return (sector_t)(sbi->s_inode_list_start + ino / sbi->s_inodes_per_block);
+	return (sector_t)(sbi->s_inode_list_start + 
+		ino / sbi->s_inodes_per_block);
 }
 
-static size_t sfs_inode_offset(struct sfs_sb_info const *sbi,
-			ino_t ino)
+static size_t sfs_inode_offset(struct sfs_sb_info const *sbi, ino_t ino)
 {
 	return sizeof(struct sfs_inode) * (ino % sbi->s_inodes_per_block);
 }
@@ -41,7 +41,8 @@ static size_t sfs_inode_offset(struct sfs_sb_info const *sbi,
  */
 void sfs_truncate(struct inode * inode)
 {
-	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)))
+	if (!(S_ISREG(inode->i_mode) || 
+		S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)))
 		return;
 	sfs_truncate_inode(inode);
 }
@@ -97,7 +98,8 @@ struct inode *sfs_iget(struct super_block *sb, ino_t ino)
 	offset = sfs_inode_offset(sbi, ino);
 
 	pr_debug("sfs reads inode %lu from %lu block with offset %lu\n",
-		(unsigned long)ino, (unsigned long)block, (unsigned long)offset);
+		(unsigned long)ino, (unsigned long)block, 
+		(unsigned long)offset);
 
 	bh = sb_bread(sb, block);
 	if (!bh) {
@@ -125,8 +127,8 @@ read_error:
 struct sfs_inode *sfs_get_inode(struct super_block *sb, ino_t ino,
 	struct buffer_head **p)
 {
-    struct sfs_sb_info *sbi = SFS_SB(sb);
-    size_t block, offset;
+	struct sfs_sb_info *sbi = SFS_SB(sb);
+	size_t block, offset;
 
 	block = sfs_inode_block(sbi, ino);
 	offset = sfs_inode_offset(sbi, ino);
@@ -182,7 +184,8 @@ int sfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 	if (wbc->sync_mode == WB_SYNC_ALL && buffer_dirty(bh)) {
 		sync_dirty_buffer(bh);
 		if (buffer_req(bh) && !buffer_uptodate(bh)) {
-			pr_debug("IO error syncing sfs inode 0x%lx\n", inode->i_ino);
+			pr_debug("IO error syncing sfs inode 0x%lx\n", 
+				inode->i_ino);
 			err = -EIO;
 		}
 	}
@@ -219,22 +222,23 @@ sfs_readpages(struct file *file, struct address_space *mapping,
 	return mpage_readpages(mapping, pages, nr_pages, sfs_get_block);
 }
 
-#if 0   // original
+#if 1  
+static ssize_t sfs_direct_io(int rw, struct kiocb *iocb,
+		const struct iovec *iov, loff_t off, unsigned long nr_segs)
+{
+	struct inode *inode = file_inode(iocb->ki_filp);
+
+	pr_debug("sfs_direct_io called\n");
+	return blockdev_direct_IO(rw, iocb, inode, iov, off, 
+				nr_segs, sfs_get_block);
+}
+#else	// for Linux 3.16 or later
 static ssize_t sfs_direct_io(int rw, struct kiocb *iocb,
 			struct iov_iter *iter, loff_t off)
 {
 	struct inode *inode = file_inode(iocb->ki_filp);
 
 	return blockdev_direct_IO(rw, iocb, inode, iter, off, sfs_get_block);
-}
-#else
-static ssize_t sfs_direct_io(int rw, struct kiocb *iocb,
-			const struct iovec *iov, loff_t off, unsigned long nr_segs)
-{
-	struct inode *inode = file_inode(iocb->ki_filp);
-
-	pr_debug("sfs_direct_io called\n");
-	return blockdev_direct_IO(rw, iocb, inode, iov, off, nr_segs, sfs_get_block);
 }
 #endif
 
@@ -258,7 +262,7 @@ sfs_write_begin(struct file *file, struct address_space *mapping,
 
 	pr_debug("sfs_write_begin called\n");
 	ret = block_write_begin(mapping, pos, len, flags, pagep, sfs_get_block);
-    if (ret < 0)
+	if (ret < 0)
 		sfs_write_failed(mapping, pos + len);
 	return ret;
 }
