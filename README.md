@@ -23,4 +23,16 @@ Current features
  - The maximum file system size = 16TB
  - No extended attribute support
 
+How to build kernel module and mkfs.sfs
+
+# cd kernel
+# make
+# cd tools
+# make
+
+How to test
+# cd test
+# ./prepare_vdisk.sh
+# ./load_and_mount.sh
+# ./umount_and_unload.sh
 
