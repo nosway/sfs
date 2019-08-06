@@ -1,4 +1,4 @@
-sfs (simple file system for Linux)
+SFS (simple file system for Linux)
 =========
 
 The file system "sfs" is helpful to understand Linux VFS and file system basics.<br> 
